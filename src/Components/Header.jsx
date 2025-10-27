@@ -46,13 +46,13 @@ export default function Header() {
   const menuItems = [
     { id: "home", label: "Home" },
     { id: "about", label: "About" },
-    { id: "work", label: "Work" },
+    { id: "work", label: "Code & Design" },
     { id: "contact", label: "Contact" },
   ];
 
   const workDropdown = [
-    { label: "Logo Designs", link: "/work" },
-    { label: "Posters", link: "/work" },
+    { label: "Design Work", link: "/work" },
+    { label: "Web Work", link: "/website" },
     { label: "Branding", link: "/work" },
     { label: "Social Media", link: "/work" },
   ];
@@ -213,56 +213,55 @@ export default function Header() {
       </div>
 
       {/* ✅ Mobile Menu with working Work dropdown */}
-     {isMenuOpen && (
-  <div className="md:hidden absolute top-full left-0 right-0 bg-black/95 border-t border-white/10 flex flex-col items-start py-4 space-y-3 px-6">
-    {menuItems.map((item) =>
-      item.id === "work" ? (
-        <div key={item.id} className="w-full">
-          <button
-            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className={`flex items-center justify-between w-full text-white/80 hover:text-white text-lg transition-all ${
-              activeSection === item.id ? "text-white font-semibold" : ""
-            }`}
-          >
-            {item.label}
-            <ChevronDown
-              size={18}
-              className={`transition-transform duration-300 ${
-                isDropdownOpen ? "rotate-180" : ""
-              }`}
-            />
-          </button>
-
-          {/* Dropdown inside mobile menu */}
-          {isDropdownOpen && (
-            <div className="flex flex-col mt-2 ml- space-y-2">
-              {workDropdown.map((drop) => (
-                <a
-                  key={drop.label}
-                  href={drop.link}
-                  className="text-white/70 hover:text-white text-base transition-colors"
+      {isMenuOpen && (
+        <div className="md:hidden absolute top-full left-0 right-0 bg-black/95 border-t border-white/10 flex flex-col items-start py-4 space-y-3 px-6">
+          {menuItems.map((item) =>
+            item.id === "work" ? (
+              <div key={item.id} className="w-full">
+                <button
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  className={`flex items-center justify-between w-full text-white/80 hover:text-white text-lg transition-all ${
+                    activeSection === item.id ? "text-white font-semibold" : ""
+                  }`}
                 >
-                  {drop.label}
-                </a>
-              ))}
-            </div>
+                  {item.label}
+                  <ChevronDown
+                    size={18}
+                    className={`transition-transform duration-300 ${
+                      isDropdownOpen ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+
+                {/* Dropdown inside mobile menu */}
+                {isDropdownOpen && (
+                  <div className="flex flex-col mt-2 ml- space-y-2">
+                    {workDropdown.map((drop) => (
+                      <a
+                        key={drop.label}
+                        href={drop.link}
+                        className="text-white/70 hover:text-white text-base transition-colors"
+                      >
+                        {drop.label}
+                      </a>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <button
+                key={item.id}
+                onClick={() => scrollToSection(item.id)}
+                className={`text-white/80 hover:text-white text-lg transition-all ${
+                  activeSection === item.id ? "text-white font-semibold" : ""
+                }`}
+              >
+                {item.label}
+              </button>
+            )
           )}
         </div>
-      ) : (
-        <button
-          key={item.id}
-          onClick={() => scrollToSection(item.id)}
-          className={`text-white/80 hover:text-white text-lg transition-all ${
-            activeSection === item.id ? "text-white font-semibold" : ""
-          }`}
-        >
-          {item.label}
-        </button>
-      )
-    )}
-  </div>
-)}
-
+      )}
     </header>
   );
 }
