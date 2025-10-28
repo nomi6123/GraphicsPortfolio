@@ -10,18 +10,19 @@ const Footer = () => {
               © 2025 Graphics Portfolio. All rights reserved. | Designed with ❤️
             </div>
             <div className="flex gap-8">
-              <button
-                onClick={() => alert("Privacy Policy page")}
-                className="text-white/70 hover:text-white text-sm transition-colors"
-              >
-                Privacy Policy
-              </button>
-              <button
-                onClick={() => alert("Terms of Service page")}
-                className="text-white/70 hover:text-white text-sm transition-colors"
-              >
-                Terms of Service
-              </button>
+              <a href="/PrivacyPolicy">
+                <button className="text-white/70 cursor-pointer hover:text-white text-sm transition-colors">
+                  Privacy Policy
+                </button>
+              </a>
+              <a href="/TermsofServices">
+                <button
+                  // onClick={() => alert("Terms of Service page")}
+                  className="text-white/70 cursor-pointer hover:text-white text-sm transition-colors"
+                >
+                  Terms of Service
+                </button>
+              </a>
             </div>
           </div>
         </div>

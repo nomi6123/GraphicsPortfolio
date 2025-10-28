@@ -12,6 +12,7 @@ import {
   Clock,
   Loader2,
   Aperture,
+  Shield,
 } from "lucide-react";
 import { useState } from "react";
 import emailjs from "@emailjs/browser";
@@ -22,6 +23,7 @@ export function ContactTab() {
     email: "",
     subject: "",
     message: "",
+    agreeToPrivacy: false,
   });
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
@@ -73,10 +75,10 @@ export function ContactTab() {
   ];
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
     setFormData({
       ...formData,
-      [name]: value,
+      [name]: type === "checkbox" ? checked : value,
     });
   };
 
@@ -96,6 +98,11 @@ export function ContactTab() {
       return;
     }
 
+    if (!formData.agreeToPrivacy) {
+      setError("Please agree to the Privacy Policy to continue.");
+      return;
+    }
+
     const serviceID = "service_g19u2fx";
     const templateID = "template_npm5hif";
     const publicKey = "YYKxrDH-ip98y3LFc";
@@ -105,7 +112,13 @@ export function ContactTab() {
     emailjs
       .send(serviceID, templateID, formData, publicKey)
       .then(() => {
-        setFormData({ name: "", email: "", subject: "", message: "" });
+        setFormData({ 
+          name: "", 
+          email: "", 
+          subject: "", 
+          message: "",
+          agreeToPrivacy: false 
+        });
         setSubmitted(true);
         setError("");
         setIsSending(false);
@@ -133,7 +146,7 @@ export function ContactTab() {
               Get In <span className="text-blue-500">Touch</span>
             </h1>
             <p className="text-base text-gray-400 max-w-xl mx-auto">
-              Ready to bring your ideas to life? Let’s collaborate on something amazing.
+              Ready to bring your ideas to life? Let's collaborate on something amazing.
             </p>
             <div className="flex items-center justify-center space-x-6 mt-4 text-sm text-gray-400">
               <div className="flex items-center">
@@ -185,7 +198,7 @@ export function ContactTab() {
             {/* Socials */}
             <div className=" p-5 rounded-2xl border border-gray-800 shadow-md">
               <h2 className="text-white text-lg font-semibold mb-3">Follow Me</h2>
-              <p className="text-gray-400 mb-3 text-sm">Let’s connect on social media</p>
+              <p className="text-gray-400 mb-3 text-sm">Let's connect on social media</p>
               <div className="flex gap-3">
                 {socialLinks.map((social, i) => (
                   <a
@@ -211,7 +224,7 @@ export function ContactTab() {
           >
             <h2 className="text-xl font-semibold text-white mb-2">Send a Message</h2>
             <p className="text-gray-400 mb-6 text-sm">
-              Tell me about your project and I’ll get back to you soon.
+              Tell me about your project and I'll get back to you soon.
             </p>
 
             <form onSubmit={handleSubmit} className="space-y-5 ">
@@ -272,9 +285,41 @@ export function ContactTab() {
                 />
               </div>
 
+              {/* Privacy Policy Checkbox */}
+              <div className="bg-gray-900/50 border border-gray-800 rounded-lg p-4">
+                <label className="flex items-start gap-3 cursor-pointer group">
+                  <div className="relative flex items-center">
+                    <input
+                      type="checkbox"
+                      name="agreeToPrivacy"
+                      checked={formData.agreeToPrivacy}
+                      onChange={handleChange}
+                      className="w-5 h-5 rounded border-gray-700 bg-gray-800 text-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 cursor-pointer"
+                      required
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <span className="text-sm text-gray-300 group-hover:text-gray-100 transition-colors">
+                      I agree to the{" "}
+                      <a
+                        href="/PrivacyPolicy"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-400 hover:text-blue-300 underline font-medium inline-flex items-center gap-1"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        Privacy Policy
+                        <Shield className="w-3 h-3" />
+                      </a>{" "}
+                      and consent to the collection and use of my information as described. *
+                    </span>
+                  </div>
+                </label>
+              </div>
+
               <button
                 type="submit"
-                className="w-[50%] h-12 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-lg text-sm shadow-md transition-all"
+                className="w-[50%] h-12 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-lg text-sm shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={isSending}
               >
                 {isSending ? (
@@ -294,7 +339,7 @@ export function ContactTab() {
             {submitted && (
               <div className="mt-4 p-3 bg-green-900/30 border border-green-700 rounded-lg text-green-400 font-medium flex items-center text-sm">
                 <CheckCircle className="h-5 w-5 text-green-400 mr-2" />
-                Message sent successfully! I’ll get back to you soon.
+                Message sent successfully! I'll get back to you soon.
               </div>
             )}
 
