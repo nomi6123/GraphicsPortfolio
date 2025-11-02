@@ -50,7 +50,7 @@ const AboutSection = () => {
   ];
 
   return (
-    <section className="py-6 md:py-12 px-4 md:px-6 bg-black text-white overflow-hidden min-h-screen">
+    <section className="py-6 md:py-12 px-4 md:px-6 bg-black text-white overflow-hidden">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className={`text-center mb-6 md:mb-8 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-10'}`}>
