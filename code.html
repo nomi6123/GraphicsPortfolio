@@ -1,0 +1,1263 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { Camera, Mail, Phone, MapPin, Clock, Facebook, Twitter, Linkedin, Instagram, ChevronLeft, ChevronRight, Play, Pause, ArrowRight, Check, ArrowUp, Menu, X } from 'lucide-react';
+
+// ============================================
+// 1. HEADER COMPONENT
+// ============================================
+const Header = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState('home');
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+      
+      const sections = ['home', 'about', 'contact'];
+      const scrollPosition = window.scrollY + 100;
+      
+      sections.forEach(section => {
+        const element = document.getElementById(section);
+        if (element) {
+          const { offsetTop, offsetHeight } = element;
+          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
+            setActiveSection(section);
+          }
+        }
+      });
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToSection = (sectionId) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+      setIsMenuOpen(false);
+    }
+  };
+
+  const menuItems = [
+    { id: 'home', label: 'Home' },
+    { id: 'about', label: 'About' },
+    { id: 'contact', label: 'Contact' },
+  ];
+
+  return (
+    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      isScrolled ? 'bg-black/95 h-16' : 'bg-black/80 h-20'
+    } backdrop-blur-lg border-b border-white/10`}>
+      <div className="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
+        {/* Logo */}
+        <button 
+          onClick={() => scrollToSection('home')}
+          className="flex items-center gap-3 hover:-translate-y-0.5 transition-transform duration-300"
+        >
+          <div className="w-12 h-12">
+            <svg viewBox="0 0 100 100" className="w-full h-full">
+              <defs>
+                <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style={{ stopColor: '#667eea', stopOpacity: 1 }} />
+                  <stop offset="100%" style={{ stopColor: '#764ba2', stopOpacity: 1 }} />
+                </linearGradient>
+              </defs>
+              <rect x="10" y="25" width="15" height="50" fill="url(#grad1)" transform="rotate(-15 17.5 50)" />
+              <rect x="35" y="15" width="15" height="70" fill="url(#grad1)" />
+              <rect x="60" y="25" width="15" height="50" fill="url(#grad1)" transform="rotate(15 67.5 50)" />
+              <circle cx="50" cy="50" r="45" fill="none" stroke="url(#grad1)" strokeWidth="2" opacity="0.5" />
+            </svg>
+          </div>
+          <span className="text-white text-2xl font-semibold tracking-tight">Graphics Portfolio</span>
+        </button>
+
+        {/* Desktop Menu */}
+        <nav className="hidden md:flex items-center gap-10">
+          {menuItems.map(item => (
+            <button
+              key={item.id}
+              onClick={() => scrollToSection(item.id)}
+              className={`relative py-2 text-base font-medium transition-all duration-300 ${
+                activeSection === item.id ? 'text-white' : 'text-white/80 hover:text-white hover:-translate-y-0.5'
+              }`}
+            >
+              {item.label}
+              <span className={`absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-purple-500 to-purple-700 transition-all duration-300 ${
+                activeSection === item.id ? 'w-full' : 'w-0'
+              }`} />
+            </button>
+          ))}
+          <a
+            href="https://github.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-white/80 hover:text-white text-base font-medium transition-all duration-300 hover:-translate-y-0.5 flex items-center gap-1"
+          >
+            GitHub <span className="text-xs opacity-70">↗</span>
+          </a>
+        </nav>
+
+        {/* Mobile Menu Toggle */}
+        <button
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          className="md:hidden w-10 h-10 flex flex-col items-center justify-center gap-1.5"
+        >
+          <span className={`w-6 h-0.5 bg-white rounded transition-all duration-300 ${isMenuOpen ? 'rotate-45 translate-y-2' : ''}`} />
+          <span className={`w-6 h-0.5 bg-white rounded transition-all duration-300 ${isMenuOpen ? 'opacity-0' : ''}`} />
+          <span className={`w-6 h-0.5 bg-white rounded transition-all duration-300 ${isMenuOpen ? '-rotate-45 -translate-y-2' : ''}`} />
+        </button>
+      </div>
+
+      {/* Mobile Menu */}
+      {isMenuOpen && (
+        <nav className="md:hidden absolute top-full left-0 right-0 bg-black/95 backdrop-blur-lg border-b border-white/10 py-5 px-6 flex flex-col gap-5">
+          {menuItems.map(item => (
+            <button
+              key={item.id}
+              onClick={() => scrollToSection(item.id)}
+              className={`text-left py-2 text-base font-medium transition-colors ${
+                activeSection === item.id ? 'text-white' : 'text-white/80'
+              }`}
+            >
+              {item.label}
+            </button>
+          ))}
+          <a
+            href="https://github.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-white/80 py-2 text-base font-medium"
+          >
+            GitHub ↗
+          </a>
+        </nav>
+      )}
+    </header>
+  );
+};
+
+// ============================================
+// 2. COVERFLOW 3D COMPONENT
+// ============================================
+const Coverflow3D = () => {
+  const [currentIndex, setCurrentIndex] = useState(3);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const autoplayRef = useRef(null);
+
+  const graphicWorks = [
+    { title: "Brand Identity Design", description: "Modern logo and brand guidelines for tech startup", image: "🎨" },
+    { title: "UI/UX Design", description: "Mobile app interface with intuitive user experience", image: "📱" },
+    { title: "Poster Design", description: "Creative event poster with bold typography", image: "🖼️" },
+    { title: "Packaging Design", description: "Premium product packaging with elegant aesthetics", image: "📦" },
+    { title: "Social Media Graphics", description: "Engaging visual content for digital platforms", image: "💫" },
+    { title: "Illustration", description: "Custom digital illustrations and character design", image: "✨" },
+    { title: "Web Design", description: "Responsive website mockups with modern layouts", image: "💻" },
+  ];
+
+  const updateCoverflow = (newIndex) => {
+    if (isAnimating) return;
+    setIsAnimating(true);
+    setCurrentIndex(newIndex);
+    setTimeout(() => setIsAnimating(false), 600);
+  };
+
+  const navigate = (direction) => {
+    if (isAnimating) return;
+    let newIndex = currentIndex + direction;
+    if (newIndex < 0) newIndex = graphicWorks.length - 1;
+    if (newIndex >= graphicWorks.length) newIndex = 0;
+    updateCoverflow(newIndex);
+  };
+
+  const startAutoplay = () => {
+    autoplayRef.current = setInterval(() => {
+      setCurrentIndex(prev => (prev + 1) % graphicWorks.length);
+    }, 4000);
+    setIsPlaying(true);
+  };
+
+  const stopAutoplay = () => {
+    if (autoplayRef.current) {
+      clearInterval(autoplayRef.current);
+      autoplayRef.current = null;
+    }
+    setIsPlaying(false);
+  };
+
+  useEffect(() => {
+    startAutoplay();
+    return () => stopAutoplay();
+  }, []);
+
+  const getItemStyle = (index) => {
+    let offset = index - currentIndex;
+    if (offset > graphicWorks.length / 2) offset -= graphicWorks.length;
+    if (offset < -graphicWorks.length / 2) offset += graphicWorks.length;
+    
+    const absOffset = Math.abs(offset);
+    const sign = Math.sign(offset);
+    
+    const translateX = offset * 220;
+    const translateZ = -absOffset * 200;
+    const rotateY = -sign * Math.min(absOffset * 60, 60);
+    const opacity = absOffset > 3 ? 0 : 1 - (absOffset * 0.2);
+    const scale = 1 - (absOffset * 0.1);
+
+    return {
+      transform: `translateX(${translateX}px) translateZ(${translateZ}px) rotateY(${rotateY}deg) scale(${scale})`,
+      opacity,
+      zIndex: 100 - absOffset,
+    };
+  };
+
+  return (
+    <div className="w-full h-screen flex items-center justify-center pt-20" style={{ perspective: '1200px' }}>
+      <div className="w-full h-full flex flex-col items-center justify-center">
+        {/* Title and Description */}
+        <div className="text-center mb-12 z-10">
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-3 animate-fadeIn">
+            {graphicWorks[currentIndex].title}
+          </h2>
+          <p className="text-lg text-white/70 animate-fadeIn">
+            {graphicWorks[currentIndex].description}
+          </p>
+        </div>
+
+        {/* Coverflow Container */}
+        <div className="relative w-full h-96" style={{ transformStyle: 'preserve-3d' }}>
+          {graphicWorks.map((work, index) => (
+            <div
+              key={index}
+              onClick={() => !isAnimating && updateCoverflow(index)}
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 md:w-80 md:h-80 cursor-pointer transition-all duration-700 ease-out"
+              style={getItemStyle(index)}
+            >
+              <div className={`w-full h-full rounded-xl shadow-2xl overflow-hidden ${
+                index === currentIndex ? 'shadow-purple-500/30' : ''
+              }`} style={{
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              }}>
+                <div className="w-full h-full flex items-center justify-center text-8xl">
+                  {work.image}
+                </div>
+              </div>
+              {/* Reflection */}
+              <div 
+                className="absolute top-full left-0 w-full h-full rounded-xl opacity-20 blur-sm"
+                style={{
+                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  transform: 'scaleY(-1)',
+                  maskImage: 'linear-gradient(to bottom, transparent 0%, black 50%, black 100%)',
+                }}
+              />
+            </div>
+          ))}
+
+          {/* Navigation Buttons */}
+          <button
+            onClick={() => { stopAutoplay(); navigate(-1); }}
+            className="absolute left-4 md:left-12 top-1/2 -translate-y-1/2 w-12 h-12 md:w-14 md:h-14 rounded-full bg-white/10 backdrop-blur-lg border-2 border-white/20 text-white flex items-center justify-center hover:bg-white/20 hover:scale-110 transition-all z-10"
+          >
+            <ChevronLeft size={24} />
+          </button>
+          <button
+            onClick={() => { stopAutoplay(); navigate(1); }}
+            className="absolute right-4 md:right-12 top-1/2 -translate-y-1/2 w-12 h-12 md:w-14 md:h-14 rounded-full bg-white/10 backdrop-blur-lg border-2 border-white/20 text-white flex items-center justify-center hover:bg-white/20 hover:scale-110 transition-all z-10"
+          >
+            <ChevronRight size={24} />
+          </button>
+        </div>
+
+        {/* Dots Indicator */}
+        <div className="flex gap-2.5 mt-8 z-10">
+          {graphicWorks.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => { stopAutoplay(); updateCoverflow(index); }}
+              className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                index === currentIndex ? 'bg-white/80 scale-125' : 'bg-white/30'
+              }`}
+            />
+          ))}
+        </div>
+
+        {/* Play/Pause Button */}
+        <button
+          onClick={() => isPlaying ? stopAutoplay() : startAutoplay()}
+          className="mt-6 w-12 h-12 rounded-full bg-white/10 backdrop-blur-lg border-2 border-white/20 text-white flex items-center justify-center hover:bg-white/20 hover:scale-110 transition-all z-10"
+        >
+          {isPlaying ? <Pause size={20} /> : <Play size={20} className="ml-1" />}
+        </button>
+      </div>
+    </div>
+  );
+};
+
+// ============================================
+// 3. ABOUT SECTION COMPONENT
+// ============================================
+const AboutSection = () => {
+  const features = [
+    "Creative and innovative design solutions",
+    "Brand identity and visual communication",
+    "Print and digital media expertise",
+    "Responsive and user-friendly layouts",
+    "Attention to detail and aesthetics",
+  ];
+
+  const stats = [
+    { number: "50+", label: "Projects Completed" },
+    { number: "100%", label: "Client Satisfaction" },
+    { number: "5+", label: "Years Experience" },
+    { number: "∞", label: "Creativity" },
+  ];
+
+  return (
+    <section className="min-h-screen py-20 px-6">
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-20">
+          <h2 className="text-5xl md:text-6xl font-bold mb-5 bg-gradient-to-r from-purple-500 to-purple-700 bg-clip-text text-transparent">
+            About My Work
+          </h2>
+          <p className="text-xl text-white/80 max-w-2xl mx-auto leading-relaxed">
+            Transforming ideas into stunning visual experiences through creative graphic design
+          </p>
+        </div>
+
+        {/* Main Content */}
+        <div className="grid md:grid-cols-2 gap-20 items-center mb-20">
+          {/* Visual Showcase */}
+          <div className="flex items-center justify-center">
+            <div className="relative w-full max-w-md h-96">
+              <div className="relative w-80 h-96 mx-auto bg-gradient-to-br from-purple-500/10 to-purple-700/10 rounded-3xl border-2 border-white/10 p-10 backdrop-blur-lg shadow-2xl">
+                {/* Decorative Corners */}
+                <div className="absolute -top-5 -left-5 w-20 h-20 border-t-2 border-l-2 border-purple-500/30 rounded-tl-3xl" />
+                <div className="absolute -bottom-5 -right-5 w-20 h-20 border-b-2 border-r-2 border-purple-500/30 rounded-br-3xl" />
+                
+                {/* Logo */}
+                <div className="w-28 h-28 mx-auto mb-8 bg-gradient-to-br from-purple-500 to-purple-700 rounded-3xl flex items-center justify-center shadow-lg shadow-purple-500/40">
+                  <svg viewBox="0 0 100 100" className="w-20 h-20">
+                    <rect x="10" y="25" width="15" height="50" fill="white" transform="rotate(-15 17.5 50)" opacity="0.9" />
+                    <rect x="35" y="15" width="15" height="70" fill="white" />
+                    <rect x="60" y="25" width="15" height="50" fill="white" transform="rotate(15 67.5 50)" opacity="0.9" />
+                    <circle cx="50" cy="50" r="45" fill="none" stroke="white" strokeWidth="2" opacity="0.3" />
+                  </svg>
+                </div>
+
+                <h3 className="text-3xl font-bold text-white text-center mb-4">
+                  Graphics Portfolio
+                </h3>
+                <p className="text-base text-white/70 text-center mb-10 leading-relaxed">
+                  Professional graphic design solutions for modern brands
+                </p>
+
+                {/* Badges */}
+                <div className="flex flex-wrap gap-3 justify-center">
+                  {['Adobe', 'Figma', 'Creative', 'Modern'].map(badge => (
+                    <span
+                      key={badge}
+                      className="px-4 py-2 bg-white/5 border border-white/20 rounded-full text-sm text-white/80 backdrop-blur-lg hover:bg-gradient-to-r hover:from-purple-500 hover:to-purple-700 hover:border-transparent hover:text-white transition-all cursor-default"
+                    >
+                      {badge}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Info */}
+          <div>
+            <h3 className="text-4xl font-bold text-white mb-8 leading-tight">
+              Elevate Your Brand with Creative Design
+            </h3>
+            <p className="text-lg text-white/80 mb-6 leading-relaxed">
+              I'm a passionate graphic designer specializing in creating visually stunning and effective designs. 
+              From brand identities to digital graphics, I bring ideas to life with creativity and precision.
+            </p>
+            <p className="text-lg text-white/80 mb-10 leading-relaxed">
+              Whether you need a complete brand overhaul or individual design pieces, I deliver work that 
+              resonates with your audience and achieves your goals.
+            </p>
+
+            {/* Features */}
+            <ul className="space-y-5 mb-10">
+              {features.map((feature, index) => (
+                <li key={index} className="flex items-center gap-4 text-white/90">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center flex-shrink-0">
+                    <Check size={16} />
+                  </div>
+                  <span className="text-base">{feature}</span>
+                </li>
+              ))}
+            </ul>
+
+            {/* CTA Button */}
+            <button
+              onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+              className="group inline-flex items-center gap-3 bg-gradient-to-r from-purple-500 to-purple-700 text-white px-8 py-4 rounded-full font-semibold hover:-translate-y-1 hover:shadow-lg hover:shadow-purple-500/50 transition-all"
+            >
+              Start Your Project
+              <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+            </button>
+          </div>
+        </div>
+
+        {/* Stats */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 p-12 md:p-16 bg-white/5 backdrop-blur-lg rounded-3xl border border-white/10">
+          {stats.map((stat, index) => (
+            <div key={index} className="text-center">
+              <div className="text-5xl font-bold mb-3 bg-gradient-to-r from-purple-500 to-purple-700 bg-clip-text text-transparent">
+                {stat.number}
+              </div>
+              <div className="text-base text-white/70">{stat.label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+// ============================================
+// 4. CONTACT SECTION COMPONENT
+// ============================================
+const ContactSection = () => {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    subject: '',
+    message: '',
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    alert("Thank you for your message! I'll get back to you soon.");
+    setFormData({ name: '', email: '', subject: '', message: '' });
+  };
+
+  const contactInfo = [
+    { icon: <Mail size={20} />, title: "Email", value: "hello@graphicsportfolio.com" },
+    { icon: <Phone size={20} />, title: "Phone", value: "+1 (555) 123-4567" },
+    { icon: <MapPin size={20} />, title: "Location", value: "San Francisco, CA 94102" },
+    { icon: <Clock size={20} />, title: "Hours", value: "Mon - Fri: 9AM - 6PM PST" },
+  ];
+
+  const socialLinks = [
+    { icon: <Facebook size={18} />, title: "Facebook" },
+    { icon: <Twitter size={18} />, title: "Twitter" },
+    { icon: <Linkedin size={18} />, title: "LinkedIn" },
+    { icon: <Instagram size={18} />, title: "Instagram" },
+  ];
+
+  return (
+    <section className="min-h-screen py-20 px-6">
+      <div className="max-w-5xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-16">
+          <h2 className="text-5xl md:text-6xl font-bold mb-5 bg-gradient-to-r from-purple-500 to-purple-700 bg-clip-text text-transparent">
+            Get In Touch
+          </h2>
+          <p className="text-xl text-white/80 max-w-2xl mx-auto">
+            Have a project in mind? Let's create something amazing together.
+          </p>
+        </div>
+
+        {/* Main Content */}
+        <div className="grid md:grid-cols-2 gap-12">
+          {/* Contact Info */}
+          <div>
+            <h3 className="text-3xl font-bold text-white mb-6">Let's Connect</h3>
+            <p className="text-white/70 mb-10 leading-relaxed">
+              I'm here to help bring your vision to life. Whether you need stunning graphics, 
+              a complete brand identity, or creative design work, I'd love to hear from you.
+            </p>
+
+            {/* Contact Details */}
+            <div className="space-y-5 mb-10">
+              {contactInfo.map((info, index) => (
+                <div
+                  key={index}
+                  className="flex items-center gap-5 p-5 bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl hover:bg-white/10 hover:translate-x-1 transition-all"
+                >
+                  <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-700 rounded-xl flex items-center justify-center flex-shrink-0">
+                    {info.icon}
+                  </div>
+                  <div>
+                    <h4 className="text-white font-medium mb-1">{info.title}</h4>
+                    <p className="text-sm text-white/70">{info.value}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Social Links */}
+            <div>
+              <h4 className="text-lg font-semibold text-white mb-5">Follow Me</h4>
+              <div className="flex gap-3">
+                {socialLinks.map((social, index) => (
+                  <button
+                    key={index}
+                    title={social.title}
+                    className="w-11 h-11 bg-white/5 border border-white/20 rounded-full flex items-center justify-center hover:bg-gradient-to-br hover:from-purple-500 hover:to-purple-700 hover:border-transparent hover:-translate-y-1 hover:shadow-lg hover:shadow-purple-500/40 transition-all"
+                  >
+                    {social.icon}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Contact Form */}
+          <div>
+            <form onSubmit={handleSubmit} className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-8 space-y-6">
+              <div>
+                <label className="block text-white/80 font-medium mb-2">Your Name</label>
+                <input
+                  type="text"
+                  required
+                  value={formData.name}
+                  onChange={(e) => setFormData({...formData, name: e.target.value})}
+                  className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white placeholder:text-white/40 focus:outline-none focus:border-purple-500 focus:bg-white/10 transition-all"
+                />
+              </div>
+              <div>
+                <label className="block text-white/80 font-medium mb-2">Email Address</label>
+                <input
+                  type="email"
+                  required
+                  value={formData.email}
+                  onChange={(e) => setFormData({...formData, email: e.target.value})}
+                  className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white placeholder:text-white/40 focus:outline-none focus:border-purple-500 focus:bg-white/10 transition-all"
+                />
+              </div>
+              <div>
+                <label className="block text-white/80 font-medium mb-2">Subject</label>
+                <input
+                  type="text"
+                  required
+                  value={formData.subject}
+                  onChange={(e) => setFormData({...formData, subject: e.target.value})}
+                  className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white placeholder:text-white/40 focus:outline-none focus:border-purple-500 focus:bg-white/10 transition-all"
+                />
+              </div>
+              <div>
+                <label className="block text-white/80 font-medium mb-2">Message</label>
+                <textarea
+                  required
+                  rows={5}
+                  value={formData.message}
+                  onChange={(e) => setFormData({...formData, message: e.target.value})}
+                  className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white placeholder:text-white/40 focus:outline-none focus:border-purple-500 focus:bg-white/10 transition-all resize-none"
+                />
+              </div>
+              <button
+                type="submit"
+                className="w-full bg-gradient-to-r from-purple-500 to-purple-700 text-white py-4 rounded-full font-semibold hover:-translate-y-1 hover:shadow-lg hover:shadow-purple-500/50 transition-all"
+              >
+                Send Message
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+// ============================================
+// 5. FOOTER COMPONENT
+// ============================================
+const Footer = () => {
+  return (
+    <footer className="bg-black/95 border-t border-white/10 py-10 px-6 mt-20">
+      <div className="max-w-5xl mx-auto">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="text-white/60 text-sm text-center md:text-left">
+            © 2025 Graphics Portfolio. All rights reserved. | Designed with ❤️
+          </div>
+          <div className="flex gap-8">
+            <button
+              onClick={() => alert('Privacy Policy page')}
+              className="text-white/70 hover:text-white text-sm transition-colors"
+            >
+              Privacy Policy
+            </button>
+            <button
+              onClick={() => alert('Terms of Service page')}
+              className="text-white/70 hover:text-white text-sm transition-colors"
+            >
+              Terms of Service
+            </button>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+};
+
+// ============================================
+// 6. SCROLL TO TOP COMPONENT
+// ============================================
+const ScrollToTop = () => {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const toggleVisibility = () => {
+      setIsVisible(window.scrollY > 500);
+    };
+
+    window.addEventListener('scroll', toggleVisibility);
+    return () => window.removeEventListener('scroll', toggleVisibility);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  return (
+    <button
+      onClick={scrollToTop}
+      className={`fixed bottom-8 right-8 w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-700 rounded-full flex items-center justify-center text-white shadow-lg hover:-translate-y-1 hover:shadow-xl hover:shadow-purple-500/50 transition-all duration-300 z-50 ${
+        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20 pointer-events-none'
+      }`}
+    >
+      <ArrowUp size={20} />
+    </button>
+  );
+};
+
+// ============================================
+// 7. MAIN APP COMPONENT - COMBINE ALL
+// ============================================
+export default function App() {
+  return (
+    <div className="bg-black min-h-screen">
+      <style jsx global>{`
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        .animate-fadeIn {
+          animation: fadeIn 0.6s forwards;
+        }
+      `}</style>
+      
+      <Header />
+      
+      {/* Home Section */}
+      <section id="home" className="min-h-screen" style={{
+        background: 'radial-gradient(ellipse at center, #1a1a2e 0%, #0f0f0f 100%)'
+      }}>
+        <Coverflow3D />
+      </section>
+      
+      {/* About Section */}
+      <section id="about" className="min-h-screen" style={{
+        background: 'linear-gradient(135deg, #0f0f0f 0%, #1a1a2e 100%)'
+      }}>
+        <AboutSection />
+      </section>
+      
+      {/* Contact Section */}
+      <section id="contact" className="min-h-screen" style={{
+        background: 'radial-gradient(ellipse at center, #1a1a2e 0%, #0f0f0f 100%)'
+      }}>
+        <ContactSection />
+      </section>
+      
+      <Footer />
+      <ScrollToTop />
+    </div>
+  );
+}
+
+# Next.js Portfolio Integration Guide
+
+## 📋 Prerequisites
+
+- Node.js 18+ installed
+- Basic knowledge of React and Next.js
+
+---
+
+## 🚀 Step 1: Create Next.js Project
+
+```bash
+# Create new Next.js app with TypeScript and Tailwind CSS
+npx create-next-app@latest my-portfolio
+
+# During setup, choose:
+✔ Would you like to use TypeScript? › Yes
+✔ Would you like to use ESLint? › Yes
+✔ Would you like to use Tailwind CSS? › Yes
+✔ Would you like to use `src/` directory? › Yes
+✔ Would you like to use App Router? › Yes
+✔ Would you like to customize the default import alias? › No
+
+# Navigate to project
+cd my-portfolio
+```
+
+---
+
+## 📦 Step 2: Install Required Dependencies
+
+```bash
+# Install Lucide React (for icons)
+npm install lucide-react
+
+# Optional: Install if you want to use images optimization
+npm install sharp
+```
+
+---
+
+## 📁 Step 3: Create Project Structure
+
+Create the following folder structure:
+
+```
+my-portfolio/
+├── src/
+│   ├── app/
+│   │   ├── page.tsx (or page.jsx)
+│   │   ├── layout.tsx (or layout.jsx)
+│   │   └── globals.css
+│   └── components/
+│       ├── Header.tsx
+│       ├── Coverflow3D.tsx
+│       ├── AboutSection.tsx
+│       ├── ContactSection.tsx
+│       ├── Footer.tsx
+│       └── ScrollToTop.tsx
+├── public/
+│   └── images/ (for your graphic work images)
+├── package.json
+└── tailwind.config.ts
+```
+
+---
+
+## 📝 Step 4: Update Files
+
+### **4.1 Update `src/app/globals.css`**
+
+Replace the content with:
+
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: #000;
+  color: white;
+  overflow-x: hidden;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.6s forwards;
+}
+```
+
+### **4.2 Create `src/app/layout.tsx`**
+
+```typescript
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import './globals.css';
+
+const inter = Inter({ subsets: ['latin'] });
+
+export const metadata: Metadata = {
+  title: 'Graphics Portfolio - Creative Design Studio',
+  description: 'Professional graphic design portfolio showcasing creative works',
+};
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="en">
+      <body className={inter.className}>{children}</body>
+    </html>
+  );
+}
+```
+
+### **4.3 Create `src/app/page.tsx`**
+
+```typescript
+'use client';
+
+import Header from '@/components/Header';
+import Coverflow3D from '@/components/Coverflow3D';
+import AboutSection from '@/components/AboutSection';
+import ContactSection from '@/components/ContactSection';
+import Footer from '@/components/Footer';
+import ScrollToTop from '@/components/ScrollToTop';
+
+export default function Home() {
+  return (
+    <div className="bg-black min-h-screen">
+      <Header />
+      
+      {/* Home Section */}
+      <section 
+        id="home" 
+        className="min-h-screen"
+        style={{
+          background: 'radial-gradient(ellipse at center, #1a1a2e 0%, #0f0f0f 100%)'
+        }}
+      >
+        <Coverflow3D />
+      </section>
+      
+      {/* About Section */}
+      <section 
+        id="about" 
+        className="min-h-screen"
+        style={{
+          background: 'linear-gradient(135deg, #0f0f0f 0%, #1a1a2e 100%)'
+        }}
+      >
+        <AboutSection />
+      </section>
+      
+      {/* Contact Section */}
+      <section 
+        id="contact" 
+        className="min-h-screen"
+        style={{
+          background: 'radial-gradient(ellipse at center, #1a1a2e 0%, #0f0f0f 100%)'
+        }}
+      >
+        <ContactSection />
+      </section>
+      
+      <Footer />
+      <ScrollToTop />
+    </div>
+  );
+}
+```
+
+---
+
+## 🎨 Step 5: Create Component Files
+
+### **5.1 Create `src/components/Header.tsx`**
+
+Copy the Header component code from the previous artifact.
+
+### **5.2 Create `src/components/Coverflow3D.tsx`**
+
+Copy the Coverflow3D component code.
+
+### **5.3 Create `src/components/AboutSection.tsx`**
+
+Copy the AboutSection component code.
+
+### **5.4 Create `src/components/ContactSection.tsx`**
+
+Copy the ContactSection component code.
+
+### **5.5 Create `src/components/Footer.tsx`**
+
+Copy the Footer component code.
+
+### **5.6 Create `src/components/ScrollToTop.tsx`**
+
+Copy the ScrollToTop component code.
+
+---
+
+## 🖼️ Step 6: Add Your Images
+
+### Option 1: Using Emojis (Current Setup)
+The code currently uses emojis as placeholders. This works immediately!
+
+### Option 2: Using Real Images
+
+1. Add your images to `public/images/` folder:
+```
+public/
+└── images/
+    ├── brand-identity.jpg
+    ├── ui-ux-design.jpg
+    ├── poster-design.jpg
+    └── ... (more images)
+```
+
+2. Update `graphicWorks` array in `Coverflow3D.tsx`:
+
+```typescript
+const graphicWorks = [
+  { 
+    title: "Brand Identity Design", 
+    description: "Modern logo and brand guidelines", 
+    image: "/images/brand-identity.jpg" // Change from emoji to path
+  },
+  // ... rest of items
+];
+```
+
+3. Replace the emoji div with Next.js Image component:
+
+```typescript
+import Image from 'next/image';
+
+// In the render, replace:
+<div className="w-full h-full flex items-center justify-center text-8xl">
+  {work.image}
+</div>
+
+// With:
+<Image 
+  src={work.image} 
+  alt={work.title}
+  fill
+  className="object-cover"
+  priority={index === currentIndex}
+/>
+```
+
+---
+
+## 🎯 Step 7: Customize Your Content
+
+### Update Portfolio Items
+Edit `src/components/Coverflow3D.tsx`:
+
+```typescript
+const graphicWorks = [
+  { 
+    title: "Your Project Name", 
+    description: "Your project description", 
+    image: "🎨" // or "/images/your-image.jpg"
+  },
+  // Add more projects
+];
+```
+
+### Update About Section
+Edit `src/components/AboutSection.tsx`:
+
+```typescript
+const features = [
+  "Your skill 1",
+  "Your skill 2",
+  // ... add your skills
+];
+
+const stats = [
+  { number: "50+", label: "Your Stat" },
+  // ... customize stats
+];
+```
+
+### Update Contact Info
+Edit `src/components/ContactSection.tsx`:
+
+```typescript
+const contactInfo = [
+  { icon: <Mail size={20} />, title: "Email", value: "your@email.com" },
+  { icon: <Phone size={20} />, title: "Phone", value: "+1 234 567 8900" },
+  // ... update your info
+];
+```
+
+---
+
+## ▶️ Step 8: Run Your Project
+
+```bash
+# Development mode
+npm run dev
+
+# Open browser at:
+# http://localhost:3000
+
+# Build for production
+npm run build
+
+# Start production server
+npm start
+```
+
+---
+
+## 🎨 Step 9: Customize Colors (Optional)
+
+To change the purple gradient theme, update colors in all components:
+
+**From:**
+```typescript
+from-purple-500 to-purple-700
+```
+
+**To:** (example with blue)
+```typescript
+from-blue-500 to-blue-700
+```
+
+Or update `tailwind.config.ts` for custom colors:
+
+```typescript
+module.exports = {
+  theme: {
+    extend: {
+      colors: {
+        primary: {
+          500: '#your-color',
+          700: '#your-darker-color',
+        },
+      },
+    },
+  },
+};
+```
+
+---
+
+## 🐛 Common Issues & Solutions
+
+### Issue 1: "Module not found: Can't resolve '@/components/...'"
+**Solution:** Make sure `tsconfig.json` has:
+```json
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
+}
+```
+
+### Issue 2: Lucide icons not working
+**Solution:** 
+```bash
+npm install lucide-react --save
+```
+
+### Issue 3: Tailwind classes not working
+**Solution:** Check `tailwind.config.ts`:
+```typescript
+content: [
+  './src/**/*.{js,ts,jsx,tsx,mdx}',
+],
+```
+
+### Issue 4: 3D effect not showing
+**Solution:** Make sure parent element has `perspective` style and children have `transform-style: preserve-3d`
+
+---
+
+## 📱 Step 10: Deploy Your Portfolio
+
+### Deploy to Vercel (Recommended)
+
+```bash
+# Install Vercel CLI
+npm i -g vercel
+
+# Deploy
+vercel
+
+# Or push to GitHub and connect to Vercel dashboard
+```
+
+### Deploy to Netlify
+
+```bash
+# Build
+npm run build
+
+# Deploy the .next folder
+```
+
+---
+
+## 🎉 You're Done!
+
+Your graphics portfolio is now ready! 
+
+### Next Steps:
+1. ✅ Add your real project images
+2. ✅ Customize text and descriptions
+3. ✅ Update contact information
+4. ✅ Add Google Analytics (optional)
+5. ✅ Set up contact form backend (optional)
+6. ✅ Deploy to production
+
+---
+
+## 💡 Pro Tips
+
+1. **Optimize Images:** Use WebP format for better performance
+2. **SEO:** Add proper meta tags in `layout.tsx`
+3. **Analytics:** Add Google Analytics or Plausible
+4. **Forms:** Use services like Formspree or EmailJS for contact form
+5. **Custom Domain:** Connect your domain in Vercel/Netlify settings
+
+Need help? Feel free to ask! 🚀
+import React from 'react'
+import { Check, ArrowRight } from 'lucide-react'
+
+const AboutSection = () => {
+  const features = [
+    "Creative and innovative design solutions",
+    "Brand identity and visual communication",
+    "Print and digital media expertise",
+    "Responsive and user-friendly layouts",
+    "Attention to detail and aesthetics",
+  ]
+
+  const stats = [
+    { number: "200+", label: "Projects Completed" },
+    { number: "100%", label: "Client Satisfaction" },
+    { number: "5+", label: "Years Experience" },
+    { number: "∞", label: "Creativity" },
+  ]
+
+  return (
+    <section className="min-h-screen py-20 px-6 bg-[#0d0d16] text-white">
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-20">
+          <h2 className="text-5xl md:text-6xl font-bold mb-5 bg-gradient-to-r from-purple-500 to-purple-700 bg-clip-text text-transparent">
+            About My Work
+          </h2>
+          <p className="text-xl text-white/80 max-w-2xl mx-auto leading-relaxed">
+            Transforming ideas into stunning visual experiences through creative
+            graphic design
+          </p>
+        </div>
+
+        {/* Main Content */}
+        <div className="grid md:grid-cols-2 gap-16 items-center mb-20">
+          {/* Left Side: Visual Card */}
+          <div className="flex items-center justify-center w-full">
+            <div className="relative w-full max-w-md">
+              <div className="relative w-full aspect-[3/4] bg-gradient-to-br from-purple-500/10 to-purple-700/10 rounded-3xl border-2 border-white/10 p-10 backdrop-blur-lg shadow-2xl flex flex-col justify-center items-center">
+                
+                {/* Decorative Corners */}
+                <div className="absolute -top-5 -left-5 w-20 h-20 border-t-2 border-l-2 border-purple-500/30 rounded-tl-3xl" />
+                <div className="absolute -bottom-5 -right-5 w-20 h-20 border-b-2 border-r-2 border-purple-500/30 rounded-br-3xl" />
+
+                {/* Image / Logo */}
+                <div className="w-32 h-32 mb-8 bg-gradient-to-br from-purple-500 to-purple-700 rounded-3xl flex items-center justify-center shadow-lg shadow-purple-500/40 overflow-hidden">
+                  <svg className="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                  </svg>
+                </div>
+
+                {/* Card Text */}
+                <h3 className="text-3xl font-bold text-white text-center mb-4">
+                  Graphics Portfolio
+                </h3>
+                <p className="text-base text-white/70 text-center mb-10 leading-relaxed">
+                  Professional graphic design solutions for modern brands
+                </p>
+
+                {/* Badges */}
+                <div className="flex flex-wrap gap-3 justify-center">
+                  {["Adobe", "Figma", "Creative", "Modern"].map((badge) => (
+                    <span
+                      key={badge}
+                      className="px-4 py-2 bg-white/5 border border-white/20 rounded-full text-sm text-white/80 backdrop-blur-lg hover:bg-gradient-to-r hover:from-purple-500 hover:to-purple-700 hover:border-transparent hover:text-white transition-all cursor-default"
+                    >
+                      {badge}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Side: Text Content */}
+          <div className="flex flex-col justify-center w-full">
+            <h3 className="text-4xl font-bold text-white mb-8 leading-tight">
+              Elevate Your Brand with Creative Design
+            </h3>
+
+            <p className="text-lg text-white/80 mb-6 leading-relaxed">
+              I'm a passionate graphic designer specializing in creating visually
+              stunning and effective designs. From brand identities to digital
+              graphics, I bring ideas to life with creativity and precision.
+            </p>
+
+            <p className="text-lg text-white/80 mb-10 leading-relaxed">
+              Whether you need a complete brand overhaul or individual design
+              pieces, I deliver work that resonates with your audience and
+              achieves your goals.
+            </p>
+
+            {/* Features List */}
+            <ul className="space-y-5 mb-10">
+              {features.map((feature, index) => (
+                <li key={index} className="flex items-center gap-4 text-white/90">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center flex-shrink-0">
+                    <Check size={16} />
+                  </div>
+                  <span className="text-base">{feature}</span>
+                </li>
+              ))}
+            </ul>
+
+            {/* CTA Button */}
+            <button className="group inline-flex items-center gap-3 bg-gradient-to-r from-purple-500 to-purple-700 text-white px-8 py-4 rounded-full font-semibold hover:-translate-y-1 hover:shadow-lg hover:shadow-purple-500/50 transition-all w-fit">
+              Start Your Project
+              <ArrowRight
+                size={20}
+                className="group-hover:translate-x-1 transition-transform"
+              />
+            </button>
+          </div>
+        </div>
+
+        {/* Stats Section */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 p-12 md:p-16 bg-white/5 backdrop-blur-lg rounded-3xl border border-white/10">
+          {stats.map((stat, index) => (
+            <div key={index} className="text-center">
+              <div className="text-5xl font-bold mb-3 bg-gradient-to-r from-purple-500 to-purple-700 bg-clip-text text-transparent">
+                {stat.number}
+              </div>
+              <div className="text-base text-white/70">{stat.label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+export default AboutSection
