@@ -529,7 +529,7 @@ export default function PrivacyPolicy() {
                       <p className="text-sm text-zinc-500">Email</p>
                       <a
                         href="mailto:contact@muhammadnoman.com"
-                        className="text-white hover:text-purple-400 transition-colors"
+                        className="text-white hover:text-purple-400 break-all  transition-colors"
                       >
                         noman1137chaya4048@gmail.com
                       </a>

@@ -309,7 +309,7 @@ export default function TermsOfService() {
                     <Mail className="h-5 w-5 text-purple-400" />
                     <div>
                       <p className="text-xs text-zinc-500">Email</p>
-                      <a href="mailto:contact@muhammadnoman.com" className="text-white hover:text-purple-400 transition-colors text-sm">
+                      <a href="mailto:contact@muhammadnoman.com" className="text-white break-all  hover:text-purple-400 transition-colors text-sm">
                         noman1137chaya4048@gmail.com
                       </a>
                     </div>
@@ -319,7 +319,7 @@ export default function TermsOfService() {
                     <div className="space-y-2">
                       <div className="flex items-center gap-3">
                         <Code className="h-4 w-4 text-purple-400" />
-                        <a href="https://nomanportfolio.vercel.app" target="_blank" rel="noopener noreferrer" className="text-white hover:text-purple-400 transition-colors text-xs">
+                        <a href="https://nomanportfolio.vercel.app" target="_blank" rel="noopener noreferrer" className="text-white break-all hover:text-purple-400 transition-colors text-xs">
                           nomanportfolio.vercel.app
                         </a>
                       </div>
