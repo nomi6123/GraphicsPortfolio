@@ -82,7 +82,8 @@ export function ContactTab() {
     });
   };
 
-  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email).toLowerCase());
+  const validateEmail = (email) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email).toLowerCase());
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -103,21 +104,21 @@ export function ContactTab() {
       return;
     }
 
-    const serviceID = "service_g19u2fx";
-    const templateID = "template_npm5hif";
-    const publicKey = "YYKxrDH-ip98y3LFc";
+    const serviceID = process.env.NEXT_PUBLIC_SERVICE_ID;
+    const templateID = process.env.NEXT_PUBLIC_TEMPLATE_ID;
+    const publicKey = process.env.NEXT_PUBLIC_PUBLIC_KEY;
 
     setIsSending(true);
 
     emailjs
       .send(serviceID, templateID, formData, publicKey)
       .then(() => {
-        setFormData({ 
-          name: "", 
-          email: "", 
-          subject: "", 
+        setFormData({
+          name: "",
+          email: "",
+          subject: "",
           message: "",
-          agreeToPrivacy: false 
+          agreeToPrivacy: false,
         });
         setSubmitted(true);
         setError("");
@@ -146,7 +147,8 @@ export function ContactTab() {
               Get In <span className="text-blue-500">Touch</span>
             </h1>
             <p className="text-sm md:text-base text-gray-400 max-w-xl mx-auto px-4">
-              Ready to bring your ideas to life? Let's collaborate on something amazing.
+              Ready to bring your ideas to life? Let's collaborate on something
+              amazing.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center sm:space-x-6 space-y-2 sm:space-y-0 mt-4 text-xs md:text-sm text-gray-400">
               <div className="flex items-center">
@@ -172,8 +174,12 @@ export function ContactTab() {
           >
             {/* Info cards */}
             <div className="p-4 md:p-5 rounded-2xl border border-gray-800 shadow-md">
-              <h2 className="text-white text-base md:text-lg font-semibold mb-2 md:mb-3">Contact Information</h2>
-              <p className="text-gray-400 mb-3 md:mb-4 text-xs md:text-sm">Reach out through any of these channels</p>
+              <h2 className="text-white text-base md:text-lg font-semibold mb-2 md:mb-3">
+                Contact Information
+              </h2>
+              <p className="text-gray-400 mb-3 md:mb-4 text-xs md:text-sm">
+                Reach out through any of these channels
+              </p>
               <div className="space-y-2 md:space-y-3">
                 {contactInfo.map((contact, i) => (
                   <a
@@ -187,8 +193,12 @@ export function ContactTab() {
                       {contact.icon}
                     </div>
                     <div>
-                      <p className="font-medium text-gray-100 text-sm">{contact.label}</p>
-                      <p className="text-xs text-gray-400 break-all">{contact.value}</p>
+                      <p className="font-medium text-gray-100 text-sm">
+                        {contact.label}
+                      </p>
+                      <p className="text-xs text-gray-400 break-all">
+                        {contact.value}
+                      </p>
                     </div>
                   </a>
                 ))}
@@ -197,8 +207,12 @@ export function ContactTab() {
 
             {/* Socials */}
             <div className="p-4 md:p-5 rounded-2xl border border-gray-800 shadow-md">
-              <h2 className="text-white text-base md:text-lg font-semibold mb-2 md:mb-3">Follow Me</h2>
-              <p className="text-gray-400 mb-3 text-xs md:text-sm">Let's connect on social media</p>
+              <h2 className="text-white text-base md:text-lg font-semibold mb-2 md:mb-3">
+                Follow Me
+              </h2>
+              <p className="text-gray-400 mb-3 text-xs md:text-sm">
+                Let's connect on social media
+              </p>
               <div className="flex gap-3">
                 {socialLinks.map((social, i) => (
                   <a
@@ -222,7 +236,9 @@ export function ContactTab() {
             transition={{ duration: 0.6, delay: 0.3 }}
             className="lg:col-span-2 bg-black p-5 md:p-6 rounded-2xl shadow-md border border-gray-800"
           >
-            <h2 className="text-lg md:text-xl font-semibold text-white mb-2">Send a Message</h2>
+            <h2 className="text-lg md:text-xl font-semibold text-white mb-2">
+              Send a Message
+            </h2>
             <p className="text-gray-400 mb-5 md:mb-6 text-xs md:text-sm">
               Tell me about your project and I'll get back to you soon.
             </p>
@@ -261,7 +277,9 @@ export function ContactTab() {
               </div>
 
               <div>
-                <label className="block text-xs md:text-sm font-semibold text-gray-300 mb-1">Subject</label>
+                <label className="block text-xs md:text-sm font-semibold text-gray-300 mb-1">
+                  Subject
+                </label>
                 <input
                   type="text"
                   name="subject"
@@ -273,7 +291,9 @@ export function ContactTab() {
               </div>
 
               <div>
-                <label className="block text-xs md:text-sm font-semibold text-gray-300 mb-1">Message *</label>
+                <label className="block text-xs md:text-sm font-semibold text-gray-300 mb-1">
+                  Message *
+                </label>
                 <textarea
                   name="message"
                   value={formData.message}
@@ -311,7 +331,8 @@ export function ContactTab() {
                         Privacy Policy
                         <Shield className="w-3 h-3" />
                       </a>{" "}
-                      and consent to the collection and use of my information as described. *
+                      and consent to the collection and use of my information as
+                      described. *
                     </span>
                   </div>
                 </label>
