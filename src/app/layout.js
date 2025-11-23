@@ -4,9 +4,10 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
+  metadataBase: new URL('https://graphics-portfolio-lake.vercel.app'), // Add this line
   title: "Muhammad Noman | Web & Graphic Design Portfolio",
   description:
-    "I’m Muhammad Noman — an enthusiastic Website Developer & Graphic Designer specializing in React.js, Next.js, JavaScript, and Node.js. I create responsive, creative, and visually appealing web applications along with professional graphic designs using Photoshop, CorelDRAW, and Illustrator.",
+    "I'm Muhammad Noman — an enthusiastic Website Developer & Graphic Designer specializing in React.js, Next.js, JavaScript, and Node.js. I create responsive, creative, and visually appealing web applications along with professional graphic designs using Photoshop, CorelDRAW, and Illustrator.",
   keywords: [
     "Graphic Designer",
     "Web Developer",

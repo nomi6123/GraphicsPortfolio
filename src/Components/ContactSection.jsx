@@ -104,14 +104,23 @@ export function ContactTab() {
       return;
     }
 
-    const serviceID = process.env.NEXT_PUBLIC_SERVICE_ID;
-    const templateID = process.env.NEXT_PUBLIC_TEMPLATE_ID;
-    const publicKey = process.env.NEXT_PUBLIC_PUBLIC_KEY;
+    // FIXED: Wrapped the keys in quotes to make them strings
+    const serviceID = "service_g19u2fx";
+    const templateID = "template_npm5hif";
+    const publicKey = "YYKxrDH-ip98y3LFc";
 
     setIsSending(true);
 
+    // FIXED: Create a proper template params object with correct field names
+    const templateParams = {
+      from_name: formData.name,
+      from_email: formData.email,
+      subject: formData.subject,
+      message: formData.message,
+    };
+
     emailjs
-      .send(serviceID, templateID, formData, publicKey)
+      .send(serviceID, templateID, templateParams, publicKey)
       .then(() => {
         setFormData({
           name: "",
