@@ -11,68 +11,46 @@ const Coverflow3D = () => {
 
   const graphicWorks = [
     {
-      title: "Brand Identity Design",
-      description: "Modern logo and brand guidelines for tech startup",
+      title: "Chicken Baryani Design",
+      description: "Traditional Chicken Biryani Brand Identity Design",
       image: "/11.jpeg",
     },
     {
-      title: "Brand Identity Design",
-      description: "Modern logo and brand guidelines for tech startup",
+      title: "Chicken Thandoori Design",
+      description: "Chicken Tandoori Brand Identity Design",
       image: "/2.jpeg",
     },
     {
-      title: "Brand Identity Design",
-      description: "Modern logo and brand guidelines for tech startup",
+      title: "Islamic Poster Design",
+      description: "وَاللَّهُ خَيْرُ الرَّازِقِين",
       image: "/3.jpeg",
     },
     {
-      title: "UI/UX Design",
-      description: "Mobile app interface with intuitive user experience",
+      title: "Election Poster Design",
+      description: "Bold, impactful design highlighting leadership, vision, unity, strength.",
       image: "/4.jpg",
     },
+
     {
-      title: "Poster Design",
-      description: "Creative event poster with bold typography",
-      image: "/5.jpeg",
-    },
-    {
-      title: "Packaging Design",
-      description: "Premium product packaging with elegant aesthetics",
+      title: "Digital Future Design",
+      description: "Innovative, modern concept embracing technology, connectivity, growth, transformation.",
       image: "/6.jpeg",
     },
     {
-      title: "Social Media Graphics",
-      description: "Engaging visual content for digital platforms",
+      title: "Lustra Skin Care  ",
+      description: "Elegant, premium branding focused on beauty, glow, purity.",
       image: "/13.jpeg",
     },
+   
     {
-      title: "Illustration",
-      description: "Custom digital illustrations and character design",
-      image: "/8.jpeg",
-    },
-    {
-      title: "Web Design",
-      description: "Responsive website mockups with modern layouts",
+      title: "Amrican Food Billboard Design",
+      description: "Bold, appetizing visuals showcasing burgers, fries, flavor, excitement.",
       image: "/9.jpeg",
     },
+
     {
-      title: "Web Design",
-      description: "Responsive website mockups with modern layouts",
-      image: "/10.jpeg",
-    },
-    {
-      title: "Web Design",
-      description: "Responsive website mockups with modern layouts",
-      image: "/1.jpg",
-    },
-    {
-      title: "Web Design",
-      description: "Responsive website mockups with modern layouts",
-      image: "/12.jpeg",
-    },
-    {
-      title: "Web Design",
-      description: "Responsive website mockups with modern layouts",
+      title: "Samosa Poster Design",
+      description: "Crispy, spicy visuals highlighting flavor, freshness, street-food charm.",
       image: "/7.jpeg",
     },
   ];
@@ -122,7 +100,7 @@ const Coverflow3D = () => {
 
     const translateX = offset * 180;
     const translateZ = -absOffset * 150;
-    
+
     const rotateY = -sign * Math.min(absOffset * 35, 35);
     const opacity = absOffset > 3 ? 0 : 1 - absOffset * 0.25;
     const scale = 1 - absOffset * 0.1;
@@ -170,7 +148,8 @@ const Coverflow3D = () => {
                   index === currentIndex ? "shadow-purple-500/30 scale-105" : ""
                 }`}
                 style={{
-                  background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                  background:
+                    "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
                 }}
               >
                 <Image
