@@ -169,13 +169,8 @@ export default function Header() {
                 }`}
               >
                 {item.label}
-                <span
-                  className={`absolute bottom-0 left-0 h-0.5 bg-linear-to-r from-purple-500 to-purple-700 transition-all duration-300 ${
-                    activeSection === item.id ? "w-full" : "w-0"
-                  }`}
-                />
               </button>
-            )
+            ),
           )}
 
           {/* Download CV Icon */}
@@ -258,7 +253,7 @@ export default function Header() {
               >
                 {item.label}
               </button>
-            )
+            ),
           )}
         </div>
       )}
