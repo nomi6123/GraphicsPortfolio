@@ -117,7 +117,7 @@ const Coverflow3D = () => {
       className="relative overflow-hidden w-full bg-black py-8 md:py-12"
       style={{
         perspective: "1000px",
-        paddingTop: "6rem", // Increased from 6rem to clear header
+        paddingTop: "140px", // Increased from 6rem to clear header
       }}
     >
       <div className="w-full flex flex-col items-center justify-center px-4">
